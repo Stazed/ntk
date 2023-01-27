@@ -147,7 +147,7 @@ Fl_Text_Display::Fl_Text_Display(int X, int Y, int W, int H, const char* l)
   mNVisibleLines = 1;
   mLineStarts = new int[mNVisibleLines];
   mLineStarts[0] = 0;
-  for (i=1; i<mNVisibleLines; i++)
+  for (i=0; i<mNVisibleLines; i++)
     mLineStarts[i] = -1;
   mSuppressResync = 0;
   mNLinesDeleted = 0;

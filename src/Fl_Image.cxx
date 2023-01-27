@@ -237,7 +237,7 @@ Fl_Image *Fl_RGB_Image::copy(int W, int H) {
   new_image->alloc_array = 1;
 
   
-  cairo_format_t fmt;
+  cairo_format_t fmt = CAIRO_FORMAT_ARGB32;
   
   switch (d() )
   {
