@@ -15,6 +15,18 @@ Currently, there is none (beyond the FLTK 1.3 docs)
 
 # Building #
 
+# Dependencies #
+     cairo
+     gcc-libs
+     fontconfig
+     glibc
+     libfreetype.so=6-64
+     libjpeg
+     libpng
+     libx11
+     libxft
+     zlib
+
 NTK uses the 'waf' build system.
      
      Type:
@@ -37,4 +49,7 @@ and the *.pc files in folder: /usr/local/lib/pkgconfig you may need to add to th
 
      export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
 
-To make the change permanent add the export to your ~/.bash_profile.
+To make the change permanent add the export to your ~/.bashrc file.
+
+Depending on your distribution, to make the export permanent, the export command may need to be
+set in a different location.
