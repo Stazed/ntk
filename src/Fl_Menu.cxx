@@ -616,7 +616,7 @@ static void setitem(int m, int n) {
 
 static int forward(int menu) { // go to next item in menu menu if possible
   menustate &pp = *p;
-  // Fl_Menu_Button can generate menu=-1. This line fixes it and selectes the first item.
+  // Fl_Menu_Button can generate menu=-1. This line fixes it and selects the first item.
   if (menu==-1) 
     menu = 0;
   menuwindow &m = *(pp.p[menu]);
@@ -630,6 +630,8 @@ static int forward(int menu) { // go to next item in menu menu if possible
 
 static int backward(int menu) { // previous item in menu menu if possible
   menustate &pp = *p;
+  if (menu==-1)
+    return 0;
   menuwindow &m = *(pp.p[menu]);
   int item = (menu == pp.menu_number) ? pp.item_number : m.selected;
   if (item < 0) item = m.numitems;
