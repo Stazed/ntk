@@ -48,8 +48,13 @@ If your pkg-config cannot find the library which is installed by default to: /us
 and the *.pc files in folder: /usr/local/lib/pkgconfig you may need to add to the PKG_CONFIG_PATH.
 
      export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+     
+If you have a runtime error indicating that the libntk*.so cannot be found then you may need to
+add to the LD_LIBRARY_PATH.
 
-To make the change permanent add the export to your ~/.bashrc file.
+     export LD_LIBRARY_PATH=/usr/local/lib
+
+To make the change permanent add the export(s) to your ~/.bashrc file.
 
 Depending on your distribution, to make the export permanent, the export command may need to be
 set in a different location.
