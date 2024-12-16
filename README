@@ -1,3 +1,4 @@
+This is an UNOFFICIAL fork of NTK with some minor fixes and updates.
 
 # What is NTK? #
 
@@ -53,6 +54,11 @@ If you have a runtime error indicating that the libntk*.so cannot be found then 
 add to the LD_LIBRARY_PATH.
 
      export LD_LIBRARY_PATH=/usr/local/lib
+
+For building with static libraries, you may need the following for proper linking.
+
+    export CPLUS_INCLUDE_PATH="/usr/local/include/ntk/:$CPLUS_INCLUDE_PATH"
+    export C_INCLUDE_PATH="/usr/local/include/ntk/:$C_INCLUDE_PATH"
 
 To make the change permanent add the export(s) to your ~/.bashrc file.
 
