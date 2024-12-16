@@ -64,7 +64,3 @@ For building with static libraries, you may need the following for proper linkin
     export CPLUS_INCLUDE_PATH="/usr/local/include/ntk/:$CPLUS_INCLUDE_PATH"
     export C_INCLUDE_PATH="/usr/local/include/ntk/:$C_INCLUDE_PATH"
 
-To make the changes permanent add the export(s) to your ~/.bashrc file.
-
-Depending on your distribution, to make the export permanent, the export command may need to be
-set in a different location.
