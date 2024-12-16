@@ -76,10 +76,12 @@ static void down_box(int x, int y, int w, int h, Fl_Color c)
     rect(x, y, w, h, border_color( c ));
 }
 
+#if 0
 static void flat_box( int x, int y, int w, int h, Fl_Color c )
 {
     rectf( x, y, w, h, c );
 }
+#endif
 
 static void border_box( int x, int y, int w, int h, Fl_Color c )
 {
