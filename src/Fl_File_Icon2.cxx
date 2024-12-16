@@ -600,7 +600,7 @@ void
 Fl_File_Icon::load_system_icons(void) {
   int		i;		// Looping var
   Fl_File_Icon	*icon;		// New icons
-  char		filename[FL_PATH_MAX];	// Filename
+  char		filename[FL_PATH_MAX + 60];	// Filename
   char		icondir[FL_PATH_MAX];	// Icon directory
   static int	init = 0;	// Have the icons been initialized?
   const char * const icondirs[] = {
