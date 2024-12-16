@@ -101,8 +101,6 @@ protected:
   int item_height(void* item) const ;
   int item_width(void* item) const ;
   void item_draw(void* item, int X, int Y, int W, int H) const ;
-  int full_height() const ;
-  int incr_height() const ;
   const char *item_text(void *item) const;
   /** Swap the items \p a and \p b.
       You must call redraw() to make any changes visible.
@@ -125,6 +123,8 @@ protected:
 
 public:
 
+  int full_height() const ;
+  int incr_height() const ;
   void remove(int line);
   void add(const char* newtext, void* d = 0);
   void insert(int line, const char* newtext, void* d = 0);
