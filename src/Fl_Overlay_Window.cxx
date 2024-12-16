@@ -55,7 +55,6 @@ void Fl_Overlay_Window::flush() {
   int erase_overlay = (damage()&FL_DAMAGE_OVERLAY);
   clear_damage(damage()&~FL_DAMAGE_OVERLAY);
   Fl_Double_Window::flush(erase_overlay);
-  Fl_X* myi = Fl_X::i(this);
   draw_overlay();
 }
 
