@@ -1,24 +1,15 @@
 //
-// "$Id: Fl_Text_Buffer.cxx 8040 2010-12-15 17:38:39Z manolo $"
+// "$Id$"
 //
 // Copyright 2001-2010 by Bill Spitzak and others.
 // Original code Copyright Mark Edel.  Permission to distribute under
 // the LGPL for the FLTK library granted by Mark Edel.
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Library General Public
-// License as published by the Free Software Foundation; either
-// version 2 of the License, or (at your option) any later version.
+// This library is free software. Distribution and use rights are outlined in
+// the file "COPYING" which should have been included with this file.  If this
+// file is missing or damaged, see the license at:
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Library General Public License for more details.
-//
-// You should have received a copy of the GNU Library General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-// USA.
+//     http://www.fltk.org/COPYING.php
 //
 // Please report all bugs and problems on the following page:
 //
@@ -117,7 +108,7 @@ Fl_Text_Buffer::Fl_Text_Buffer(int requestedSize, int preferredGapSize)
   mPreferredGapSize = preferredGapSize;
   mBuf = (char *) malloc(requestedSize + mPreferredGapSize);
   mGapStart = 0;
-  mGapEnd = mPreferredGapSize;
+  mGapEnd = requestedSize + mPreferredGapSize;
   mTabDist = 8;
   mPrimary.mSelected = 0;
   mPrimary.mStart = mPrimary.mEnd = 0;
@@ -148,9 +139,9 @@ Fl_Text_Buffer::~Fl_Text_Buffer()
     delete[]mModifyProcs;
     delete[]mCbArgs;
   }
-  if (mNPredeleteProcs != 0) {
-    delete[]mPredeleteProcs;
-    delete[]mPredeleteCbArgs;
+  if (mNPredeleteProcs > 0) {
+    delete[] mPredeleteProcs;
+    delete[] mPredeleteCbArgs;
   }
 }
 
@@ -174,7 +165,11 @@ char *Fl_Text_Buffer::text() const {
 void Fl_Text_Buffer::text(const char *t)
 {
   IS_UTF8_ALIGNED(t)
-  
+
+  // if t is null then substitute it with an empty string
+  // then don't return so that internal cleanup can happen
+  if (!t) t="";
+
   call_predelete_callbacks(0, length());
   
   /* Save information for redisplay, and get rid of the old buffer */
@@ -183,7 +178,7 @@ void Fl_Text_Buffer::text(const char *t)
   free((void *) mBuf);
   
   /* Start a new buffer with a gap of mPreferredGapSize at the end */
-  int insertedLength = strlen(t);
+  int insertedLength = (int) strlen(t);
   mBuf = (char *) malloc(insertedLength + mPreferredGapSize);
   mLength = insertedLength;
   mGapStart = insertedLength;
@@ -740,9 +735,9 @@ void Fl_Text_Buffer::add_predelete_callback(Fl_Text_Predelete_Cb bufPreDeleteCB,
     newPreDeleteProcs[i + 1] = mPredeleteProcs[i];
     newCBArgs[i + 1] = mPredeleteCbArgs[i];
   }
-  if (!mNPredeleteProcs != 0) {
-    delete[]mPredeleteProcs;
-    delete[]mPredeleteCbArgs;
+  if (mNPredeleteProcs > 0) {
+    delete[] mPredeleteProcs;
+    delete[] mPredeleteCbArgs;
   }
   newPreDeleteProcs[0] = bufPreDeleteCB;
   newCBArgs[0] = cbArg;
@@ -772,19 +767,16 @@ void Fl_Text_Buffer::remove_predelete_callback(Fl_Text_Predelete_Cb bufPreDelete
     return;
   }
   
-  /* Allocate new lists for remaining callback procs and args (if
-   any are left) */
+  /* Allocate new lists for remaining callback procs and args (if any are left) */
   mNPredeleteProcs--;
   if (mNPredeleteProcs == 0) {
-    mNPredeleteProcs = 0;
     delete[]mPredeleteProcs;
     mPredeleteProcs = NULL;
     delete[]mPredeleteCbArgs;
     mPredeleteCbArgs = NULL;
     return;
   }
-  Fl_Text_Predelete_Cb *newPreDeleteProcs =
-  new Fl_Text_Predelete_Cb[mNPredeleteProcs];
+  Fl_Text_Predelete_Cb *newPreDeleteProcs = new Fl_Text_Predelete_Cb[mNPredeleteProcs];
   void **newCBArgs = new void *[mNPredeleteProcs];
   
   /* copy out the remaining members and free the old lists */
@@ -796,8 +788,8 @@ void Fl_Text_Buffer::remove_predelete_callback(Fl_Text_Predelete_Cb bufPreDelete
     newPreDeleteProcs[i] = mPredeleteProcs[i + 1];
     newCBArgs[i] = mPredeleteCbArgs[i + 1];
   }
-  delete[]mPredeleteProcs;
-  delete[]mPredeleteCbArgs;
+  delete[] mPredeleteProcs;
+  delete[] mPredeleteCbArgs;
   mPredeleteProcs = newPreDeleteProcs;
   mPredeleteCbArgs = newCBArgs;
 }
@@ -1126,7 +1118,7 @@ int Fl_Text_Buffer::insert_(int pos, const char *text)
   if (!text || !*text)
     return 0;
   
-  int insertedLength = strlen(text);
+  int insertedLength = (int) strlen(text);
   
   /* Prepare the buffer to receive the new text.  If the new text fits in
    the current buffer, just move the gap (if necessary) to where
@@ -1297,7 +1289,7 @@ void Fl_Text_Buffer::replace_selection_(Fl_Text_Selection * sel,
     return;
   
   /* Do the appropriate type of replace */
-    replace(start, end, text);
+  replace(start, end, text);
   
   /* Unselect (happens automatically in BufReplace, but BufReplaceRect
    can't detect when the contents of a selection goes away) */
@@ -1429,7 +1421,7 @@ void Fl_Text_Buffer::reallocate_with_gap(int newGapStart, int newGapLen)
   mBuf = newBuf;
   mGapStart = newGapStart;
   mGapEnd = newGapEnd;
-  }
+}
 
 
 /*
@@ -1568,7 +1560,7 @@ static int general_input_filter(char *buffer, int buflen,
 {
   char *p, *q, multibyte[5];
   int lq, r, offset;
-  p = endline = line;
+  p = line;
   q = buffer;
   while (q < buffer + buflen) {
     if (p >= endline) {
@@ -1595,43 +1587,63 @@ static int general_input_filter(char *buffer, int buflen,
 /*
  filter that produces, from an input stream fed by reading from fp,
  a UTF-8-encoded output stream written in buffer.
+ Returns #bytes read into 'buffer'.
+
  Input can be UTF-8. If it is not, it is decoded with CP1252.
  Output is UTF-8.
- *input_was_changed is set to true if the input was not strict UTF-8 so output
+
+ *input_was_changed returns true if input was not strict UTF-8, so output
  differs from input.
  */
-static int utf8_input_filter(char *buffer, int buflen, char *line, int sline, char* &endline, 
-	      FILE *fp, int *input_was_changed)
+static int utf8_input_filter(char *buffer, 		// result buffer we fill with utf8 encoded text
+			     int buflen,		// max size of buffer from caller
+			     char *line,		// file line buffer caller wants us to use
+			     int sline, 		// max size of line buffer
+			     char* &endline, 		// keeps track of leftovers in line[] buffer between calls
+	                     FILE *fp,			// open file we're reading data from
+			     int *input_was_changed)	// returned flag: 'true' if buffer[] different from file due to utf8 encoding
 {
+  // p - work pointer to line[]
+  // q - work pointer to buffer[]
+  // l - length of utf8 sequence being worked on
+  // lp - fl_utf8decode() length of utf8 sequence being worked on
+  // lq - fl_utf8encode() length of utf8 sequence being worked on
+  // r - bytes read from last fread()
+  // u - utf8 decoded sequence as a single multibyte unsigned integer
   char *p, *q, multibyte[5];
   int l, lp, lq, r;
   unsigned u;
-  p = endline = line;
+  p = line;
   q = buffer;
   while (q < buffer + buflen) {
-    if (p >= endline) {
-      r = fread(line, 1, sline, fp);
+    if (p >= endline) {			// walked off end of input file's line buffer?
+      r = (int) fread(line, 1, sline, fp);	// read another block of sline bytes from file
       endline = line + r; 
-      if (r == 0) return q - buffer;
+      if (r == 0) return (int) (q - buffer);	// EOF? return bytes read into buffer[]
       p = line;
     }
-    l = fl_utf8len1(*p);
-    if (p + l > endline) {
-      memmove(line, p, endline - p);
+    // Predict length of utf8 sequence
+    //    See if utf8 seq we're working on would extend off end of line buffer,
+    //    and if so, adjust + load more data so that it doesn't.
+    //
+    l = fl_utf8len1(*p);		// anticipate length of utf8 sequence
+    if (p + l > endline) {		// would walk off end of line buffer?
+      memmove(line, p, endline - p);	// re-jigger line buffer to get some room
       endline -= (p - line);
-      r = fread(endline, 1, sline - (endline - line), fp);
+      r = (int) fread(endline, 1, sline - (endline - line), fp);	 // re-fill line buffer
       endline += r;
       p = line;
-      if (endline - line < l) break;
+      if (endline - line < l) break;	// sequence *still* extends past end? stop loop
     }
     while ( l > 0) {
-      u = fl_utf8decode(p, p+l, &lp);
-      lq = fl_utf8encode(u, multibyte);
+      u = fl_utf8decode(p, p+l, &lp);	// get single utf8 encoded char as a Unicode value
+      lq = fl_utf8encode(u, multibyte);	// re-encode Unicode value to utf8 in multibyte[]
       if (lp != l || lq != l) *input_was_changed = true;
-      if (q + lq > buffer + buflen) {
-	memmove(line, p, endline - p);
-	endline -= (p - line);
-	return q - buffer;
+
+      if (q + lq > buffer + buflen) {	// encoding would walk off end of buffer[]?
+	memmove(line, p, endline - p);	// re-jigger line[] buffer for next call
+	endline -= (p - line);		// adjust end of line[] buffer for next call
+	return (int) (q - buffer);		// return what's decoded so far, caller will consume buffer
       }
       memcpy(q, multibyte, lq);
       q += lq; 
@@ -1641,7 +1653,7 @@ static int utf8_input_filter(char *buffer, int buflen, char *line, int sline, ch
   }
   memmove(line, p, endline - p);
   endline -= (p - line);
-  return q - buffer;
+  return (int) (q - buffer);
 }
 
 const char *Fl_Text_Buffer::file_encoding_warning_message = 
@@ -1681,13 +1693,13 @@ const char *Fl_Text_Buffer::file_encoding_warning_message =
     buffer[l] = 0;
     insert(pos, buffer);
     pos += l;
-    }
+  }
   int e = ferror(fp) ? 2 : 0;
   fclose(fp);
   delete[]buffer;
   if ( (!e) && input_file_was_transcoded && transcoding_warning_action) {
     transcoding_warning_action(this);
-    }
+  }
   return e;
 }
 
@@ -1704,7 +1716,7 @@ int Fl_Text_Buffer::outputfile(const char *file,
     return 1;
   for (int n; (n = min(end - start, buflen)); start += n) {
     const char *p = text_range(start, start + n);
-    int r = fwrite(p, 1, n, fp);
+    int r = (int) fwrite(p, 1, n, fp);
     free((void *) p);
     if (r != n)
       break;
@@ -1790,5 +1802,5 @@ int Fl_Text_Buffer::utf8_align(int pos) const
 }
 
 //
-// End of "$Id: Fl_Text_Buffer.cxx 8040 2010-12-15 17:38:39Z manolo $".
+// End of "$Id$".
 //
