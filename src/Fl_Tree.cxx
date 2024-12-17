@@ -85,6 +85,7 @@ static void free_path(char **arr) {
   }
 }
 
+#if 0		/* unused code -- STR #3169 */
 // INTERNAL: Recursively descend tree hierarchy, accumulating total child count
 static int find_total_children(Fl_Tree_Item *item, int count=0) {
   count++;
@@ -93,6 +94,7 @@ static int find_total_children(Fl_Tree_Item *item, int count=0) {
   }
   return(count);
 }
+#endif
 
 /// Constructor.
 Fl_Tree::Fl_Tree(int X, int Y, int W, int H, const char *L) : Fl_Group(X,Y,W,H,L) { 

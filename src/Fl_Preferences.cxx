@@ -960,6 +960,7 @@ Fl_Preferences::Name::~Name() {
 
 int Fl_Preferences::Node::lastEntrySet = -1;
 
+#if 0
 // recursively create a path in the file system
 static char makePath( const char *path ) {
   if (access(path, 0)) {
@@ -980,7 +981,6 @@ static char makePath( const char *path ) {
   return 1;
 }
 
-#if 0
 // strip the filename and create a path
 static void makePathForFile( const char *path ) {
   const char *s = strrchr( path, '/' );

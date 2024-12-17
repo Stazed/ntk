@@ -2286,7 +2286,9 @@ void Fl_Window::label(const char *name,const char *iname) {
 // contents are restored to the area, but this assumes the area
 // is cleared to background color.  So this is disabled in this version.
 // Fl_Window *fl_boxcheat;
-static inline int can_boxcheat(uchar b) {return (b==1 || ((b&2) && b<=15));}
+
+/* can_boxcheat is disabled for NTK */
+//static inline int can_boxcheat(uchar b) {return (b==1 || ((b&2) && b<=15));}
 
 void Fl_Window::show() {
   image(Fl::scheme_bg_);

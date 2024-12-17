@@ -60,7 +60,7 @@
   the tabs look the way you want them to.
 */
 class FL_EXPORT Fl_Tabs : public Fl_Group {
-  Fl_Widget *value_;
+//  Fl_Widget *value_; // NOTE: this member no longer used -- STR #3169-FLTK
   Fl_Widget *push_;
   int *tab_pos;		// array of x-offsets of tabs per child + 1
   int *tab_width;	// array of widths of tabs per child + 1
