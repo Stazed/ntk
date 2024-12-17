@@ -117,7 +117,7 @@ void Fl_Tree_Item::show_self(const char *indent) const {
            indent,label(),children(),(void*)this, (void*)_parent, depth());
   }
   if ( children() ) {
-    char *i2 = (char*)malloc(strlen(indent) + 2);
+    char *i2 = (char*)malloc(strlen(indent) + 3);
     strcpy(i2, indent);
     strcat(i2, " |");
     for ( int t=0; t<children(); t++ ) {
