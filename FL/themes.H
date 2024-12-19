@@ -21,4 +21,15 @@
 
 #include "FL/Fl_Theme.H"
 
-void fl_register_themes ( void );
+/**
+ * Application specific theme default setting.
+ * @param path
+ *      The path to the app preferences file.
+ */
+void ntk_register_themes ( std::string path = "" );
+
+/**
+ * Global theme registration, uses global preferences in ~/.config/ntk/
+ */
+void fl_register_themes (void );
+
