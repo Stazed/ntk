@@ -25,6 +25,7 @@
 //
 //     http://www.fltk.org/str.php
 //
+
 /** \file Fl_Device.H 
  \brief declaration of classes Fl_Device, Fl_Graphics_Driver, Fl_Surface_Device, 
  Fl_Display_Device, Fl_Device_Plugin.
@@ -39,6 +40,7 @@
 #include <FL/Fl_Bitmap.H>
 #include <FL/Fl_Pixmap.H>
 #include <FL/Fl_RGB_Image.H>
+#include <cstdlib>  // free
 
 #include <FL/Fl_Cairo.H>
 
@@ -146,7 +148,7 @@ public:
 protected:
   void transformed_vertex0(COORD_T x, COORD_T y);
   void fixloop();
-
+  
 /*  ** \brief red color for background and/or mixing if device does not support masking or alpha *
   uchar bg_r_; 
   ** \brief green color for background and/or mixing if device does not support masking or alpha *
@@ -206,7 +208,7 @@ protected:
   friend void fl_end_complex_polygon();
   friend void fl_push_matrix();
   friend void fl_pop_matrix();
-  friend void fl_mult_matrix(double a, double b, double c, double d, double x, double y );
+  friend void fl_mult_matrix(double a, double b, double c, double d, double x, double y);
   friend void fl_scale(double x, double y);
   friend void fl_scale(double x);
   friend void fl_translate(double x, double y);
@@ -376,7 +378,7 @@ protected:
    the image offset by the cx and cy arguments.
    */
   virtual void draw(Fl_Bitmap *bm, int XP, int YP, int WP, int HP, int cx, int cy) = 0;
-    
+  
 public:
   static const char *class_id;
   virtual const char *class_name() {return class_id;};
@@ -403,7 +405,7 @@ public:
   /** Sets the current Fl_Font_Descriptor for the graphics driver */
   inline void font_descriptor(Fl_Font_Descriptor *d) { font_descriptor_ = d;}
   /** \brief The destructor */
-  virtual ~Fl_Graphics_Driver() {};
+  virtual ~Fl_Graphics_Driver() { if (p) free(p); }
 };
 
 #if defined(__APPLE__) || defined(FL_DOXYGEN)
@@ -616,7 +618,7 @@ public:
  */
 class FL_EXPORT Fl_Display_Device : public Fl_Surface_Device {
 public:
-static Fl_Display_Device *_display; // the platform display device
+  static Fl_Display_Device *_display; // the platform display device
 public:
   static const char *class_id;
   const char *class_name() {return class_id;};
@@ -634,8 +636,8 @@ public:
 class FL_EXPORT Fl_Device_Plugin : public Fl_Plugin {
 public:
   /** \brief The constructor */
-  Fl_Device_Plugin(const char *name)
-  : Fl_Plugin(klass(), name) { }
+  Fl_Device_Plugin(const char *pluginName)
+  : Fl_Plugin(klass(), pluginName) { }
   /** \brief Returns the class name */
   virtual const char *klass() { return "fltk:device"; }
   /** \brief Returns the plugin name */
