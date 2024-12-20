@@ -527,6 +527,8 @@ int menuwindow::find_selected(int mx, int my) {
   if (!itemheight) { // menubar
     int xx = 3; int n = 0;
     const Fl_Menu_Item* m = menu ? menu->first() : 0;
+    if(!m)
+        return -1;
     for (; ; m = m->next(), n++) {
       if (!m->text) return -1;
       xx += m->measure(0, button) + 16;
