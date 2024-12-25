@@ -167,7 +167,15 @@ Fl_Theme::set ( const char *name )
             return 1;
         }
 
-    return 0;
+    /* If we didn't find the theme then set it to the first == vector */
+    Fl_Theme *t = first;
+    Fl::reload_scheme();
+    t->_init_func();
+    Fl_Theme::_current = t;
+
+    refresh();
+
+    return 1;
 }
 
 void
